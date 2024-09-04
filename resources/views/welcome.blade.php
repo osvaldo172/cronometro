@@ -38,6 +38,7 @@
 
 <div class="timer" id="timer">00:00:00</div>
 <button onclick="startTimer()">Iniciar</button>
+<button onclick="pauseTimer()">Pausar</button>
 <button onclick="stopAndSend()">Detener y enviar</button>
 <button onclick="resetTimer()">Detener y reiniciar</button>
 
@@ -76,6 +77,14 @@
         minutes = 0;
         hours = 0;
         document.getElementById("timer").innerHTML = "00:00:00";
+    }
+
+    function pauseTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isPaused = true;
+        }
     }
 
     function updateTimer() {
