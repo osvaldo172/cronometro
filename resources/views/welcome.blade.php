@@ -11,7 +11,7 @@
             margin-top: 50px;
         }
         .timer {
-            font-size: 48px;
+            font-size: 20em;
             margin-bottom: 20px;
         }
         button {
