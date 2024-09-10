@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Cronómetro</title>
     <style>
         body {
@@ -37,72 +39,18 @@
 @endif
 
 <div class="timer" id="timer">00:00:00</div>
-<button onclick="startTimer()">Iniciar</button>
-<button onclick="pauseTimer()">Pausar</button>
-<button onclick="stopAndSend()">Detener y enviar</button>
-<button onclick="resetTimer()">Detener y reiniciar</button>
-
-<form id="timerForm" action="{{ route('storeTime') }}" method="POST" style="display: none;">
-    @csrf
-    <input type="hidden" name="time" id="hiddenTime">
-</form>
 
 <script>
-    let timerInterval;
-    let seconds = 0;
-    let minutes = 0;
-    let hours = 0;
-
-    function startTimer() {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-        }
-        timerInterval = setInterval(updateTimer, 1000);
+    function fetchTime() {
+        fetch('/current-time')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('timer').innerHTML = data.time;
+            });
     }
 
-    function stopAndSend() {
-        clearInterval(timerInterval);
-        const timeString =
-            (hours < 10 ? "0" + hours : hours) + ":" +
-            (minutes < 10 ? "0" + minutes : minutes) + ":" +
-            (seconds < 10 ? "0" + seconds : seconds);
-
-        document.getElementById("hiddenTime").value = timeString;
-        document.getElementById("timerForm").submit();
-    }
-
-    function resetTimer() {
-        clearInterval(timerInterval);
-        seconds = 0;
-        minutes = 0;
-        hours = 0;
-        document.getElementById("timer").innerHTML = "00:00:00";
-    }
-
-    function pauseTimer() {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            isPaused = true;
-        }
-    }
-
-    function updateTimer() {
-        seconds++;
-        if (seconds == 60) {
-            seconds = 0;
-            minutes++;
-            if (minutes == 60) {
-                minutes = 0;
-                hours++;
-            }
-        }
-
-        document.getElementById("timer").innerHTML =
-            (hours < 10 ? "0" + hours : hours) + ":" +
-            (minutes < 10 ? "0" + minutes : minutes) + ":" +
-            (seconds < 10 ? "0" + seconds : seconds);
-    }
+    // Actualiza el tiempo cada segundo
+    setInterval(fetchTime, 250);
 </script>
 
 </body>
